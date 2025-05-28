@@ -7,35 +7,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.newsaggregator.data.rss.RssFeed
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.example.newsaggregator.navigation.Destinations
 import com.example.newsaggregator.news_loader.NewsLoader
 import com.example.newsaggregator.ui.main_screen.MainScreen
 import com.example.newsaggregator.ui.theme.NewsAggregatorTheme
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.example.newsaggregator.ui.web_view.WebScreenObject
+import com.example.newsaggregator.ui.web_view.WebViewScreen
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import nl.adaptivity.xmlutil.serialization.XML
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import retrofit2.Retrofit
-
-private val retrofit = Retrofit.Builder()
-    .baseUrl("https://www.theguardian.com")
-    .addConverterFactory(
-        XML.asConverterFactory(
-//            MediaType.get("application/xml; charset=UTF8")
-            "application/xml; charset=UTF8".toMediaType()
-        )
-    ).build()
-
-private val guardian = retrofit.create(RssFeed::class.java)
 
 
 @AndroidEntryPoint
@@ -44,62 +28,56 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val newsLoader= NewsLoader()
-        newsLoader.example()
 
         setContent {
             NewsAggregatorTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(
-                        modifier = Modifier.padding(innerPadding),
-                    )
-                    //                    Greeting(
-//                        text = "Press me!",
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = Destinations.MAIN_SCREEN
+                ) {
+                    composable(Destinations.MAIN_SCREEN) {
+                        MainScreen(
+                            modifier = Modifier,
+                            onItemClick = { link ->
+                                navController.navigate(
+                                    WebScreenObject(
+                                        link = link
+                                    )
+                                )
+                            }
+                        )
+                    }
+
+                    composable<WebScreenObject> { navEntry ->
+                        val navData = navEntry.toRoute<WebScreenObject>()
+                        WebViewScreen(
+                            navData = navData
+                        )
+                    }
+
+                }
+
+//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+////                    WebViewScreen2(
+//
+//                    MainScreen(
 //                        modifier = Modifier.padding(innerPadding),
-//                        guardian,
 //                    )
-                }
+
+
+//                    //                    Greeting(
+////                        text = "Press me!",
+////                        modifier = Modifier.padding(innerPadding),
+////                        guardian,
+////                    )
+//                }
+//                }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(
-    text: String,
-    modifier: Modifier = Modifier,
-    feed: RssFeed,
-) {
-    val scope = rememberCoroutineScope()
-    Button(
-        onClick = {
-            Log.d("happy", "done")
-            scope.launch {
-                val r = feed.getRss()
-                r.channel.items.forEach {
-                    Log.d("link", it.link)
-                    Log.d("guid", it.guid)
-                    Log.d("dcDate", it.dcDate)
-                    Log.d("pubDate", it.pubDate)
-                }
-            }
-        }
-    ) {
-        Text(
-            text = text,
-            modifier = modifier,
-        )
 
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NewsAggregatorTheme {
-        Greeting(
-            text = "Press me!",
-            feed = guardian
-        )
-    }
-}

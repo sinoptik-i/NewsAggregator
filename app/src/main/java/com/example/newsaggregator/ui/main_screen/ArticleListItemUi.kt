@@ -1,6 +1,7 @@
 package com.example.newsaggregator.ui.main_screen
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,20 +21,30 @@ import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.example.newsaggregator.R
 import com.example.newsaggregator.data.rss.Article
+import com.example.newsaggregator.ui.web_view.WebViewScreen
 
-const val TAG_ArticleListItemUi="ArticleListItemUi"
+const val TAG_ArticleListItemUi = "ArticleListItemUi"
+
 @Composable
-fun ArticleListItemUi(article: Article) {
+fun ArticleListItemUi(
+    article: Article,
+    onArticleClick: (link: String) -> Unit = {}
+) {
+
+    Log.d(TAG_ArticleListItemUi,article.link)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .clickable {
+                onArticleClick(article.link)
+            }
     ) {
 
 //            model = R.drawable.test_article_image,// article.imageUrl,
 
-        Log.d(TAG_ArticleListItemUi, article.link)
+//        Log.d(TAG_ArticleListItemUi, article.link)
         AsyncImage(
             model = article.imageUrl,
             contentDescription = null,
@@ -47,6 +58,7 @@ fun ArticleListItemUi(article: Article) {
             text = article.title,
             color = Color.Black,
             fontSize = 20.sp,
+            maxLines = 2,
             fontWeight = FontWeight.Bold,
         )
 

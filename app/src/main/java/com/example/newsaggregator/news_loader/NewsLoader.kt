@@ -17,6 +17,8 @@ const val TAG = "NewsLoader"
 class NewsLoader {
 
 
+
+
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://www.theguardian.com")
         .addConverterFactory(
@@ -39,9 +41,10 @@ class NewsLoader {
                 articles.add(
                     Article(
                         title = item.title,
-                        description = item.description,
+                        description = item.description
+                            .replace("<.*?>".toRegex(), ""),
                         imageUrl = item.contents[1].url,
-                        link = item.link
+                        link = item .link
                     )
                 )
             }
@@ -67,7 +70,7 @@ class NewsLoader {
 //                Log.d(TAG, "categories ${it.categories}")
 
 //                item.contents[0].url
-                Log.d(TAG, "categories ${item.contents[0].url}")
+                Log.d(TAG, "categories ${item.guid}")
 
 //                item.contents.forEach { pic ->
 //                    Log.d(TAG, "contents ${pic.url}")
