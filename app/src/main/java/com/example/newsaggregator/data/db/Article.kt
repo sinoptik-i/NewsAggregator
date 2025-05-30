@@ -1,0 +1,74 @@
+package com.example.newsaggregator.data.db
+
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.TypeConverters
+import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
+
+@Entity(tableName = "articles")
+@TypeConverters(StringListConverter::class)
+data class Article(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id") val id: Int,
+    @ColumnInfo(name = "title") val title: String = "",
+    @ColumnInfo(name = "description") val description: String = "",
+    @ColumnInfo(name = "imageUrl") val imageUrl: String = "",
+    @ColumnInfo(name = "link") val link: String = "",
+    @ColumnInfo(name = "creator") val creator: String = "",
+    @ColumnInfo(name = "pubDate") val pubDate: String = "",
+    @ColumnInfo(name = "categories") val categories: List<String> = emptyList<String>()
+) {
+    @SuppressLint("SimpleDateFormat")
+    fun timePassed() {
+        val format = "dd "
+        val dateFormat = "Thu, 29 May 2025 04:00:17 GMT"
+        val df = dateFormat.split(" ")
+        val ddf = "$df[1] $df[2] $df[3] $df[4]"
+
+
+//TimeZoneFormat.GMTOffsetPatternType.
+        val formatter = SimpleDateFormat(format)
+        val nowTime = Calendar.getInstance().timeInMillis
+        var result = ""
+        try {
+            val date = formatter.parse(pubDate)
+            if (date != null) {
+                result = "$(date.time - nowTime) / 3600000"
+            }
+        } catch (exception: Exception) {
+            Log.e("TAG", "${exception.message}")
+        }
+
+    }
+}
+
+@Dao
+interface ArticleDao {
+
+    @Query("SELECT * FROM articles")
+    fun getArticles(): Flow<List<Article>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertArticles(articles: List<Article>)//:Long
+
+    @Query("DELETE FROM articles")
+    suspend fun dropAll()
+
+    @Transaction
+    suspend fun setArticles(articles: List<Article>) {
+        dropAll()
+        insertArticles(articles)
+    }
+
+}
