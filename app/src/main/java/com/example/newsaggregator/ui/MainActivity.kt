@@ -30,8 +30,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val newsLoader = NewsLoader()
-        newsLoader.example()
+//        val newsLoader = NewsLoader()
+//        newsLoader.example()
 
         setContent {
             NewsAggregatorTheme {

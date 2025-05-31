@@ -1,6 +1,8 @@
 package com.example.newsaggregator.ui.main_screen
 
+import android.R.attr.contentDescription
 import android.util.Log
+import android.widget.ProgressBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +14,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newsaggregator.data.db.Article
+import com.example.newsaggregator.ui.main_screen.components.ArticleListItemUi
+import com.example.newsaggregator.ui.main_screen.components.CategoryPanel
 import com.example.newsaggregator.ui.web_view.WebScreenObject
 
 
@@ -34,20 +44,39 @@ fun MainScreen(
     viewModel: MainScreenVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-//    val categoryChoise by viewModel.categoryChoise.collectAsStateWithLifecycle()
-    val categoryState by viewModel.categoryState.collectAsStateWithLifecycle()
+    val categoryChoise by viewModel.categoryChoise.collectAsStateWithLifecycle()
+//    val categoryState by viewModel.categoryState.collectAsStateWithLifecycle()
+    val sortState by viewModel.sortState.collectAsStateWithLifecycle()
+
+    val selectedCategory by viewModel.categoryChoise.collectAsStateWithLifecycle()
 
     Column()
     {
-        if (categoryState.isNotEmpty()) {
-            CategoryPanel(
-                category = categoryState,
-                onCancelCategoryClick = { viewModel.clearCategory() }
-            )
+        Spacer(modifier = Modifier.width(5.dp))
+        Row {
+            IconButton(
+                onClick = {
+                    viewModel.sort()
+                }
+            ) {
+                Icon(
+                    if (sortState) {
+                        Icons.Default.KeyboardArrowDown
+                    } else {
+                        Icons.Default.KeyboardArrowUp
+                    },
+                    contentDescription = null,
+                )
+            }
+
+            categoryChoise?.let {
+                CategoryPanel(
+                    category = it,
+                    onCancelCategoryClick = { viewModel.clearCategory() }
+                )
+            }
         }
         Box {
-
-            Spacer(modifier = Modifier.width(5.dp))
             when (val current = state) {
                 is Success -> {
                     ContentArticles(

@@ -1,6 +1,5 @@
-package com.example.newsaggregator.ui.main_screen
+package com.example.newsaggregator.ui.main_screen.components
 
-import android.R.attr.maxLines
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,15 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.example.newsaggregator.R
 import com.example.newsaggregator.data.db.Article
-import com.example.newsaggregator.news_loader.TAG
 import com.example.newsaggregator.ui.web_view.WebScreenObject
-import com.example.newsaggregator.ui.web_view.WebViewScreen
 
 const val TAG_ArticleListItemUi = "ArticleListItemUi"
 

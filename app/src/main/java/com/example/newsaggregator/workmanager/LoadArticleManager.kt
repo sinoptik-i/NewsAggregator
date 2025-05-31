@@ -13,7 +13,7 @@ class LoadArticleManager @Inject constructor(
     val workManager: WorkManager
 ) {
 
-    private val uniquePeriodicWork="loadArticles"
+    private val uniquePeriodicWork = "loadArticles"
 
     fun startPeriodicLoadData() {
         val weatherPeriodReq = PeriodicWorkRequest.Builder(
@@ -31,12 +31,15 @@ class LoadArticleManager @Inject constructor(
             .build()
 
 
-            workManager
-            .enqueueUniquePeriodicWork(
-                uniquePeriodicWork,
-                ExistingPeriodicWorkPolicy.KEEP,
-                weatherPeriodReq
-            )
+        workManager.enqueueUniquePeriodicWork(
+            uniquePeriodicWork,
+            ExistingPeriodicWorkPolicy.KEEP,
+            weatherPeriodReq
+        )
+    }
+
+    fun stop(){
+        workManager.cancelUniqueWork(uniquePeriodicWork)
     }
 
 }
