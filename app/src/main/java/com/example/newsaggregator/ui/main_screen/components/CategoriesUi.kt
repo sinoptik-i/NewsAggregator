@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +18,7 @@ import androidx.compose.ui.unit.dp
 @Preview
 @Composable
 fun CategoriesUi(
-    categories: List<String> = listOf("asdasd", "zxczxc"),
+    categories: List<String> = listOf(),
     onCategoryClick: (category: String) -> Unit={}
 ) {
     LazyRow {
@@ -42,13 +43,12 @@ fun CategoryItem(
 ) {
     Box(
         modifier = Modifier
-            .background(Color.Gray)
+            .background(Color.White)
             .padding(3.dp)
-//            .clip(RoundedCornerShape(3.dp))
             .border(
                 width = 1.dp,
-//                brush = Brush.,
-                color = Color.Black
+                color = Color.Black,
+                shape = RoundedCornerShape(5.dp)
             )
             .padding(3.dp)
             .clickable {
@@ -60,7 +60,6 @@ fun CategoryItem(
         Text(
             text = text,
             modifier = Modifier
-//                .clip(RoundedCornerShape(15.dp)),
         )
     }
 }

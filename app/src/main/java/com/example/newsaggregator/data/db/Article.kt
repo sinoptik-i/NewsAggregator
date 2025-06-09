@@ -28,29 +28,8 @@ data class Article(
     @ColumnInfo(name = "creator") val creator: String = "",
     @ColumnInfo(name = "pubDate") val pubDate: String = "",
     @ColumnInfo(name = "categories") val categories: List<String> = emptyList<String>()
-) {
-    @SuppressLint("SimpleDateFormat")
-    fun timePassed() {
-        val format = "dd "
-        val dateFormat = "Thu, 29 May 2025 04:00:17 GMT"
-        val df = dateFormat.split(" ")
-        val ddf = "$df[1] $df[2] $df[3] $df[4]"
+){
 
-
-//TimeZoneFormat.GMTOffsetPatternType.
-        val formatter = SimpleDateFormat(format)
-        val nowTime = Calendar.getInstance().timeInMillis
-        var result = ""
-        try {
-            val date = formatter.parse(pubDate)
-            if (date != null) {
-                result = "$(date.time - nowTime) / 3600000"
-            }
-        } catch (exception: Exception) {
-            Log.e("TAG", "${exception.message}")
-        }
-
-    }
 }
 
 @Dao

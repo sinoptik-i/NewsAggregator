@@ -1,7 +1,10 @@
 package com.example.newsaggregator.ui.main_screen.components
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +26,6 @@ import coil.compose.AsyncImage
 import com.example.newsaggregator.data.db.Article
 import com.example.newsaggregator.ui.web_view.WebScreenObject
 
-const val TAG_ArticleListItemUi = "ArticleListItemUi"
 
 @Composable
 fun ArticleListItemUi(
@@ -31,28 +33,19 @@ fun ArticleListItemUi(
     onArticleClick: (webScreenObject: WebScreenObject) -> Unit = {},
     onCategoryClick: (category: String) -> Unit
 ) {
-
-    Log.d(TAG_ArticleListItemUi, article.link)
-    Column(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .clickable {
-                onArticleClick(
-                    WebScreenObject(
-                        link = article.link
-                    )
-                )
-            }
+            .padding(5.dp)
+            .border(
+                width = 1.dp,
+                color = Color.Blue,
+                shape = RoundedCornerShape(8.dp)
+            )
     ) {
-
-//            model = R.drawable.test_article_image,// article.imageUrl,
-
-//        Log.d(TAG_ArticleListItemUi, article.link)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-//                .padding(16.dp)
+                .padding(16.dp)
                 .clickable {
                     onArticleClick(
                         WebScreenObject(
@@ -61,72 +54,80 @@ fun ArticleListItemUi(
                     )
                 }
         ) {
-            AsyncImage(
-                model = article.imageUrl,
-                contentDescription = null,
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
-                    .clip(RoundedCornerShape(15.dp)),
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = article.title,
-                color = Color.Black,
-                fontSize = 20.sp,
-                maxLines = 2,
-                fontWeight = FontWeight.Bold,
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = article.description,
-                color = Color.Gray,
-                fontSize = 16.sp,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Row() {
+                    .clickable {
+                        onArticleClick(
+                            WebScreenObject(
+                                link = article.link
+                            )
+                        )
+                    }
+            ) {
+                AsyncImage(
+                    model = article.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .clip(RoundedCornerShape(15.dp)),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "creator: ${article.creator}",
-                    color = Color.Gray,
-                    fontSize = 10.sp,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
+                    text = article.title,
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    maxLines = 2,
+                    fontWeight = FontWeight.Bold,
+                )
 
-                    )
-                Spacer(modifier = Modifier.width(5.dp))
-
+                Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = "date: ${article.pubDate}",
+                    text = article.description,
                     color = Color.Gray,
-                    fontSize = 10.sp,
+                    fontSize = 16.sp,
                     maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Row(  modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    Text(
+                        text = "creator: ${article.creator}",
+                        color = Color.Gray,
+                        fontSize = 10.sp,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
 
-                    )
+                        )
+                    Spacer(modifier = Modifier.width(5.dp))
+
+                    Text(
+                        text = "date: ${article.pubDate}",
+                        color = Color.Gray,
+                        fontSize = 10.sp,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+
+                        )
+                }
+
             }
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
 
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-//                .padding(16.dp)
-//                .clickable {
-//                    onArticleClick(
-//                        WebScreenObject(
-//                            link = article.link
-//                        )
-//                    )
-//                }
-        ) {
-            Spacer(modifier = Modifier.height(5.dp))
-            CategoriesUi(
-                article.categories,
-                { it ->
-                    onCategoryClick(it)
-                })
+            ) {
+                Spacer(modifier = Modifier.height(5.dp))
+                CategoriesUi(
+                    article.categories,
+                    { it ->
+                        onCategoryClick(it)
+                    })
+            }
         }
 
     }

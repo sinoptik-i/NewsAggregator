@@ -23,11 +23,7 @@ class LoadArticleManager @Inject constructor(
             2,
             TimeUnit.HOURS
         )
-//            .setInitialDelay(
-//                2,
-//                //Calendar.getInstance().minutesToNextWeatherRequest().toLong(),
-//                TimeUnit.MINUTES
-//            )
+
             .build()
 
 

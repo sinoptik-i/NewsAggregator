@@ -1,7 +1,10 @@
 package com.example.newsaggregator.ui.main_screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newsaggregator.data.TimeConverter
 import com.example.newsaggregator.data.db.Article
 import com.example.newsaggregator.data.db.ArticlesRepository
 import com.example.newsaggregator.workmanager.LoadArticleManager
@@ -18,8 +21,11 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenVM @Inject constructor(
     val repository: ArticlesRepository,
-    workManager: LoadArticleManager
+    workManager: LoadArticleManager,
+    timeConverter : TimeConverter
 ) : ViewModel() {
+
+
 
     //category
     //-------------------------------------------------------------------------------------------
@@ -45,10 +51,11 @@ class MainScreenVM @Inject constructor(
     }
 
 
-//articles
+    //articles
 //-------------------------------------------------------------------------------------------
     private val syncState: MutableStateFlow<LoadState<List<Article>>> =
         MutableStateFlow(InProgress)
+    @RequiresApi(Build.VERSION_CODES.O)
     val state = repository.getArticlesFlow()
         .combine(categoryState) { content, category ->
             if (category.isNotEmpty()) {
@@ -58,6 +65,12 @@ class MainScreenVM @Inject constructor(
             } else {
                 content
             }
+                .map { article ->
+                    article.copy(
+                        pubDate = timeConverter.deltaDate(article.pubDate)
+                    )
+
+                }
 
         }
         .combine(syncState) { content, syncState ->

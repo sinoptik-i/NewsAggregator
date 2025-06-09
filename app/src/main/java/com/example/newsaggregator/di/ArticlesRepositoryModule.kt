@@ -22,12 +22,7 @@ object ArticlesRepositoryModule {
     fun providesArticlesDao(
         @ApplicationContext context: Context
     ): ArticleDao = ArticleDb.getDatabase(context).dao()
-//        .also {
-//        ArticleDb.getDatabase(context).withTransaction {
-//            it.dropAll()
-//            it.setArticles()
-//        }
-//    }
+
 
 
     @Provides

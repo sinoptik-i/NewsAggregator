@@ -1,8 +1,10 @@
 package com.example.newsaggregator.ui.main_screen
 
 import android.R.attr.contentDescription
+import android.os.Build
 import android.util.Log
 import android.widget.ProgressBar
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,13 +34,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.newsaggregator.data.TimeConverter
 import com.example.newsaggregator.data.db.Article
 import com.example.newsaggregator.ui.main_screen.components.ArticleListItemUi
 import com.example.newsaggregator.ui.main_screen.components.CategoryPanel
 import com.example.newsaggregator.ui.web_view.WebScreenObject
 
-
-const val TAG = "MainScreen"
 
 @Composable
 fun MainScreen(
@@ -45,64 +48,66 @@ fun MainScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val categoryChoise by viewModel.categoryChoise.collectAsStateWithLifecycle()
-//    val categoryState by viewModel.categoryState.collectAsStateWithLifecycle()
     val sortState by viewModel.sortState.collectAsStateWithLifecycle()
 
-    val selectedCategory by viewModel.categoryChoise.collectAsStateWithLifecycle()
+    Scaffold() { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+        )
+        {
+            Spacer(modifier = Modifier.width(5.dp))
+            Row {
+//                IconButton(
+//                    onClick = {
+//                        viewModel.sort()
+//                    }
+//                ) {
+//                    Icon(
+//                        if (sortState) {
+//                            Icons.Default.KeyboardArrowDown
+//                        } else {
+//                            Icons.Default.KeyboardArrowUp
+//                        },
+//                        contentDescription = null,
+//                    )
+//                }
 
-    Column()
-    {
-        Spacer(modifier = Modifier.width(5.dp))
-        Row {
-            IconButton(
-                onClick = {
-                    viewModel.sort()
-                }
-            ) {
-                Icon(
-                    if (sortState) {
-                        Icons.Default.KeyboardArrowDown
-                    } else {
-                        Icons.Default.KeyboardArrowUp
-                    },
-                    contentDescription = null,
-                )
-            }
-
-            categoryChoise?.let {
-                CategoryPanel(
-                    category = it,
-                    onCancelCategoryClick = { viewModel.clearCategory() }
-                )
-            }
-        }
-        Box {
-            when (val current = state) {
-                is Success -> {
-                    ContentArticles(
-                        articles = current.data,
-                        onItemClick = { it ->
-                            onItemClick(it)
-                        },
-                        onCategoryClick = { it ->
-                            viewModel.changeCategory(it)
-                        },
+                categoryChoise?.let {
+                    CategoryPanel(
+                        category = it,
+                        onCancelCategoryClick = { viewModel.clearCategory() }
                     )
                 }
-
-                is Failed -> {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center),
-                        onClick = viewModel::loadContent
-                    ) {
-                        Text("Ошибка. Повторить попытку.")
+            }
+            Box {
+                when (val current = state) {
+                    is Success -> {
+                        ContentArticles(
+                            articles = current.data,
+                            onItemClick = { it ->
+                                onItemClick(it)
+                            },
+                            onCategoryClick = { it ->
+                                viewModel.changeCategory(it)
+                            },
+                        )
                     }
-                }
 
-                is InProgress -> {
-                    ProgressBar()
+                    is Failed -> {
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center),
+                            onClick = viewModel::loadContent
+                        ) {
+                            Text("Ошибка. Повторить попытку.")
+                        }
+                    }
+
+                    is InProgress -> {
+                        ProgressBar()
+                    }
                 }
             }
         }
@@ -126,6 +131,7 @@ fun ProgressBar() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ContentArticles(
     articles: List<Article>,
@@ -136,7 +142,9 @@ private fun ContentArticles(
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
+        val timeConverter = TimeConverter()
         items(articles) { item ->
+//            Log.d("timeTest", timeConverter.timeFromString(item.pubDate))
             ArticleListItemUi(
                 item,
                 onArticleClick = { it ->
@@ -145,20 +153,9 @@ private fun ContentArticles(
                 onCategoryClick = { it ->
                     onCategoryClick(it)
 
-                }//item.link) }
+                }
             )
-            Log.d(TAG, "${item.imageUrl}")
         }
 
     }
 }
-
-//    var articles by remember { mutableStateOf(emptyList<Article>()) }
-//    var articles = viewModel.getListArticles()
-//        .collectAsState(initial = emptyList<Article>())
-
-//    mainScreenVM.getArticles(
-//        takeArticles = { it ->
-//            articles = it
-//        }
-//    )
