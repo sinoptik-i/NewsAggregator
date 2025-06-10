@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -107,4 +109,7 @@ dependencies {
 
     implementation(libs.coil.compose)
     testImplementation(kotlin("test"))
+
+    implementation(libs.androidx.material)
+
 }

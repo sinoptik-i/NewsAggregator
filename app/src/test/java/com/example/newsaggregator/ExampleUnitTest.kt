@@ -2,6 +2,7 @@ package com.example.newsaggregator
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.newsaggregator.data.TimeConverter
 import org.joda.time.DateTime
@@ -12,6 +13,7 @@ import java.time.temporal.ChronoField
 import java.util.Calendar
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
 
 
 /**
@@ -30,12 +32,14 @@ class ExampleUnitTest {
 
 fun testTime() {
     val anyTime = "Thu, 29 May 2025 04:00:17 GMT"
-    timeFromString(anyTime)
-    val timeConverter=TimeConverter()
-
-    println(timeConverter.timeFromString(anyTime))
-    println(timeConverter.currentDate())
-    println(timeConverter.deltaDate(anyTime))
+//    deltaTime(anyTime)
+    deltaTimeHours(anyTime)
+//    timeFromString(anyTime)
+//    val timeConverter=TimeConverter()
+//
+//    println(timeConverter.timeFromString(anyTime))
+//    println(timeConverter.currentDate())
+//    println(timeConverter.deltaDate(anyTime))
 
 
 
@@ -52,23 +56,6 @@ fun toDateFormat(str: String = "Thu, 29 May 2025 04:00:17 GMT"): String {
 }
 
 
-fun deltaTime(time: String) {
-//    val TF2 = "EEE, dd MMM yyyy HH:mm:ss z"
-//    val dt = DateTime.parse(time, DateTimeFormat.forPattern(TF2))
-//    val dHours=dt.minus(DateTime.now().millis)
-//
-//    println(dHours.millis/ (1000 * 60 * 60 * 24))
-//
-//    println(dHours.millis/ (1000 * 60 * 60 ))
-
-
-    val time1 = DateTimeFormatter.RFC_1123_DATE_TIME.parse(time)
-    println("year - ${time1.get(ChronoField.YEAR)}")
-    println("millis - ${time1.get(ChronoField.MILLI_OF_SECOND)}")
-
-
-//    dt.toInstant().minus(DateTime.now().toInstant())
-}
 
 //rabotaet. no kak dostat' millis?
 fun timeFromString(time: String): String {
@@ -82,22 +69,18 @@ fun timeFromString(time: String): String {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SimpleDateFormat")
 fun deltaTimeHours(time: String): Long {
-    val time1 = DateTimeFormatter.RFC_1123_DATE_TIME.parse(time)
-    println("year - ${time1.get(ChronoField.YEAR)}")
-    val TIME_FORMAT = "dd MMM yyyy HH:mm:ss"
     val TF2 = "EEE, dd MMM yyyy HH:mm:ss z"
 
 //    val sdf: DateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z", Locale.US)
     val formatter = SimpleDateFormat(TF2, java.util.Locale.US)//, Locale.US)
-    val dt = DateTime.parse(time, DateTimeFormat.forPattern(TF2))
+//    val dt = DateTime.parse(time, DateTimeFormat.forPattern(TF2))
 //    dt.toInstant().minus(DateTime.now().toInstant())
     val nowTime = Calendar.getInstance().timeInMillis
     try {
         val date = formatter.parse(time)
-//        Log.d(DATE_TAG, "t $date.time")
+        println( "t ${date!!.time}")
 //        Log.d(DATE_TAG, "now Time $date.time")
 //        if (date != null) {
 //            Log.d(DATE_TAG, "now Time ${(nowTime - date.time) / (1000 * 60 * 60 * 24)}")

@@ -1,9 +1,6 @@
 package com.example.newsaggregator.ui.main_screen
 
-import android.R.attr.contentDescription
 import android.os.Build
-import android.util.Log
-import android.widget.ProgressBar
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,14 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +32,14 @@ import com.example.newsaggregator.ui.main_screen.components.ArticleListItemUi
 import com.example.newsaggregator.ui.main_screen.components.CategoryPanel
 import com.example.newsaggregator.ui.web_view.WebScreenObject
 
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import com.example.newsaggregator.ui.main_screen.components.ArticleUi
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
     onItemClick: (webScreenObject: WebScreenObject) -> Unit,
@@ -50,7 +49,27 @@ fun MainScreen(
     val categoryChoise by viewModel.categoryChoise.collectAsStateWithLifecycle()
     val sortState by viewModel.sortState.collectAsStateWithLifecycle()
 
-    Scaffold() { paddingValues ->
+//    val pullRefreshState = rememberPullRefreshState (refreshing, { viewModel.refresh() })
+
+//p4m State<Boolean> a ne bool
+//    val ptrVisible by viewModel.ptrStateExp.collectAsStateWithLifecycle()
+//    val ptrState = rememberPullRefreshState(
+//        viewModel.ptrState.collectAsStateWithLifecycle(),
+//        { viewModel.pullToRefresh() })
+
+    val ptrVis = remember { mutableStateOf(viewModel.ptrStateExp) }
+    val ptrState = rememberPullRefreshState(
+        viewModel.ptrStateExp.value,
+        { viewModel.pullToRefreshExp() })
+
+
+
+    Scaffold(
+        modifier = Modifier.pullRefresh(ptrState)
+    ) { paddingValues ->
+
+
+
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -111,6 +130,16 @@ fun MainScreen(
                 }
             }
         }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top=20.dp),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            PullRefreshIndicator(
+                viewModel.ptrStateExp.value,
+                ptrState,
+
+                )
+        }
     }
 }
 
@@ -134,7 +163,7 @@ fun ProgressBar() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ContentArticles(
-    articles: List<Article>,
+    articles: List<ArticleUi>,
     onItemClick: (webScreenObject: WebScreenObject) -> Unit,
     onCategoryClick: (category: String) -> Unit
 

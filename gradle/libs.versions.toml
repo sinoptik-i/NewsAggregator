@@ -24,8 +24,12 @@ workRuntimeKtx = "2.10.1"
 androidxJunit = "1.3.0-alpha03"
 junitKtx = "1.3.0-alpha03"
 junitJupiter = "5.8.1"
+#pulltorefresh="1.4.0-alpha02"
 
 [libraries]
+androidx-material = { group = "androidx.compose.material", name = "material" }
+#pulltorefresh-compose={ group = "androidx.compose.material", name = "material", version.ref = "pulltorefresh" }
+
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
 

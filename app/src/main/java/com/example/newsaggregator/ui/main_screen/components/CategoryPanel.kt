@@ -29,12 +29,17 @@ fun CategoryPanel(
     onCancelCategoryClick: () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(5.dp))
             .background(Color.White)
             .padding(8.dp)
-            .border(1.dp,Color.Black)
-            .clip(RoundedCornerShape(5.dp))
+            .border(
+                1.dp,
+                Color.Black,
+                RoundedCornerShape(5.dp)
+            )
+//            .clip(RoundedCornerShape(5.dp))
             .padding(8.dp),
 
         verticalAlignment = Alignment.CenterVertically

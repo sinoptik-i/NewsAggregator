@@ -1,5 +1,7 @@
 package com.example.newsaggregator.ui.main_screen.components
 
+import android.R.attr.description
+import android.system.Os.link
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,24 +17,36 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.newsaggregator.R
 import com.example.newsaggregator.data.db.Article
+import com.example.newsaggregator.ui.main_screen.components.share_button.ShareButton
 import com.example.newsaggregator.ui.web_view.WebScreenObject
+
+@Immutable
+data class ArticleUi(
+    val article: Article,
+    val dateText: String,
+)
 
 
 @Composable
 fun ArticleListItemUi(
-    article: Article,
+    articleUi: ArticleUi,
     onArticleClick: (webScreenObject: WebScreenObject) -> Unit = {},
-    onCategoryClick: (category: String) -> Unit
+    onCategoryClick: (category: String) -> Unit = {}
 ) {
+
+    val article=articleUi.article
     Box(
         modifier = Modifier
             .padding(5.dp)
@@ -46,13 +60,7 @@ fun ArticleListItemUi(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .clickable {
-                    onArticleClick(
-                        WebScreenObject(
-                            link = article.link
-                        )
-                    )
-                }
+
         ) {
 
             Column(
@@ -66,8 +74,10 @@ fun ArticleListItemUi(
                         )
                     }
             ) {
+
                 AsyncImage(
                     model = article.imageUrl,
+//                    model = R.drawable.test_article_image,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -92,7 +102,8 @@ fun ArticleListItemUi(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(5.dp))
-                Row(  modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Text(
@@ -106,7 +117,7 @@ fun ArticleListItemUi(
                     Spacer(modifier = Modifier.width(5.dp))
 
                     Text(
-                        text = "date: ${article.pubDate}",
+                        text = "date: ${articleUi.dateText}",
                         color = Color.Gray,
                         fontSize = 10.sp,
                         maxLines = 3,
@@ -116,7 +127,7 @@ fun ArticleListItemUi(
                 }
 
             }
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
 
@@ -127,8 +138,35 @@ fun ArticleListItemUi(
                     { it ->
                         onCategoryClick(it)
                     })
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    ShareButton(
+                        textToShare = article.link
+                    )
+
+                }
             }
         }
 
     }
 }
+
+//@Preview
+//@Composable
+//fun ArticleListItemUiPreview() {
+//    ArticleListItemUi(
+//        article = Article(
+//            id = 0,
+//            title = "title",
+//            description = "description",
+//            imageUrl = R.drawable.test_article_image.toString(),
+//            link = "link",
+//            creator = "creator",
+//            pubDate = "pubDate",
+//            categories = listOf("category", "category", "category"),
+//        )
+//    )
+//}

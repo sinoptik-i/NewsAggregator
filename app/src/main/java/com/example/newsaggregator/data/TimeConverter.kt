@@ -4,6 +4,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoField
@@ -14,7 +15,6 @@ class TimeConverter @Inject constructor() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun timeFromString(time: String): String {
         val time1 = DateTimeFormatter.RFC_1123_DATE_TIME.parse(time)
-
         val month = time1.get(ChronoField.MONTH_OF_YEAR)
         val day = time1.get(ChronoField.DAY_OF_YEAR)
 
@@ -25,7 +25,7 @@ class TimeConverter @Inject constructor() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun currentDate(): String {
         val time1 = LocalDateTime.now()
-
+        val millis = time1.toInstant(ZoneOffset.UTC).toEpochMilli()
         val month = time1.get(ChronoField.MONTH_OF_YEAR)
         val day = time1.get(ChronoField.DAY_OF_YEAR)
         return "$month $day"
