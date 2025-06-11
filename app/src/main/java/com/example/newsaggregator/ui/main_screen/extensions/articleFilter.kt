@@ -1,5 +1,6 @@
 package com.example.newsaggregator.ui.main_screen.extensions
 
+import android.R.attr.category
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.newsaggregator.data.TimeConverter
@@ -25,9 +26,29 @@ fun Flow<List<Article>>.categoryFilter(category: MutableStateFlow<String>) =
         }
     }
 
+
+public interface Comparable<in T> {
+    public operator fun compareTo(other: T): Int
+}
+
+fun Flow<List<Article>>.dateSort(sortState: MutableStateFlow<Int>): Flow<List<Article>> {
+    val timeConverter = TimeConverter()
+    return combine(sortState) { content, sortState ->
+        when (sortState) {
+            1 -> content.sortedBy { it ->
+                timeConverter.dateInMillis(it.pubDate)
+            }
+
+            2 -> content.sortedByDescending { it ->
+                timeConverter.dateInMillis(it.pubDate)
+            }
+            else -> content
+        }
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 fun Flow<List<Article>>.convertDateForView(
-//     timeConverter: TimeConverter
 ): Flow<List<Article>> {
     val timeConverter = TimeConverter()
     return map { articles ->
@@ -42,16 +63,15 @@ fun Flow<List<Article>>.convertDateForView(
 fun Flow<List<Article>>.loadStateTransmit(
     syncState: MutableStateFlow<LoadState<List<Article>>>
 ) = combine(syncState) { content, syncState ->
-        when {
-            content.isEmpty() -> syncState
-            else -> when (syncState) {
-                is Failed -> Success(content, error = syncState.throwable)
-
-                InProgress -> Success(content, isInProgress = true)
-                is Success<*> -> Success(content)
-            }
+    when {
+        content.isEmpty() -> syncState
+        else -> when (syncState) {
+            is Failed -> Success(content, error = syncState.throwable)
+            InProgress -> Success(content, isInProgress = true)
+            is Success<*> -> Success(content)
         }
     }
+}
 
 fun <From, To> LoadState<From>.mapData(mapper: (From) -> To): LoadState<To> = when (this) {
     is Failed -> this

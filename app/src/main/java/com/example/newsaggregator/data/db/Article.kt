@@ -28,9 +28,13 @@ data class Article(
     @ColumnInfo(name = "creator") val creator: String = "",
     @ColumnInfo(name = "pubDate") val pubDate: String = "",
     @ColumnInfo(name = "categories") val categories: List<String> = emptyList<String>()
-){
-
-}
+)
+//    : Comparable<Article> {
+//    //    override fun compareTo(other: Person): Int = age - other.age
+//    override fun compareTo(other: Article): Int {
+//        TODO("Not yet implemented")
+//    }
+//}
 
 @Dao
 interface ArticleDao {

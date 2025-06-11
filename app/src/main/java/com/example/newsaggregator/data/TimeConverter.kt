@@ -3,11 +3,12 @@ package com.example.newsaggregator.data
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoField
+import java.util.Calendar
 import javax.inject.Inject
 
 class TimeConverter @Inject constructor() {
@@ -19,6 +20,21 @@ class TimeConverter @Inject constructor() {
         val day = time1.get(ChronoField.DAY_OF_YEAR)
 
         return "$month $day"
+    }
+
+    fun dateInMillis(articleDate: String): Long {
+        val timeFormat = "EEE, dd MMM yyyy HH:mm:ss z"
+        val formatter = SimpleDateFormat(timeFormat, java.util.Locale.US)
+
+        try {
+            val date = formatter.parse(articleDate)
+            return date!!.time
+        }
+        catch (e: Throwable){
+            Log.d("timeParse", "$e.message")
+            Log.d("timeParse", articleDate)
+            return 0
+        }
     }
 
 
@@ -82,7 +98,7 @@ class TimeConverter @Inject constructor() {
         } catch (e: Exception) {
             Log.d("timeParse", "$e.message")
             Log.d("timeParse", articleDate)
-            return "error"
+            return ""
         }
 
 

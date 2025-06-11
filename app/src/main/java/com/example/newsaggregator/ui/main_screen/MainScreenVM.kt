@@ -9,6 +9,7 @@ import com.example.newsaggregator.data.db.Article
 import com.example.newsaggregator.data.db.ArticlesRepository
 import com.example.newsaggregator.ui.main_screen.components.ArticleToMainUiMapper
 import com.example.newsaggregator.ui.main_screen.extensions.categoryFilter
+import com.example.newsaggregator.ui.main_screen.extensions.dateSort
 import com.example.newsaggregator.ui.main_screen.extensions.loadStateTransmit
 import com.example.newsaggregator.ui.main_screen.extensions.mapData
 import com.example.newsaggregator.workmanager.LoadArticleManager
@@ -49,10 +50,11 @@ class MainScreenVM @Inject constructor(
 
     //sort
     //-------------------------------------------------------------------------------------------
-    var sortState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    fun sort() {
-        sortState.value = !sortState.value
+   private val sortState: MutableStateFlow<Int> = MutableStateFlow(0)
+    fun changeSortState(sortSt: Int){
+        sortState.value=sortSt
     }
+
 
 
     //articles
@@ -63,47 +65,13 @@ class MainScreenVM @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     val state = repository.getArticlesFlow()
         .categoryFilter(categoryState)
+        .dateSort(sortState)
         .loadStateTransmit(syncState)
         .mapData(uiMapper::map)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InProgress)
 
-//        .combine(categoryState) { content, category ->
-//            if (category.isNotEmpty()) {
-//                content.filter { it ->
-//                    it.categories.contains(category)
-//                }
-//            } else {
-//                content
-//            }
-
-
-//                .map { article ->
-//                    article.copy(
-//                        pubDate = timeConverter.deltaDate(article.pubDate)
-//                    )
-//
-//                }
-//
-//        }
-
-
-//        .combine(syncState) { content, syncState ->
-//            when {
-//                content.isEmpty() -> syncState
-//                else -> when (syncState) {
-//                    is Failed -> Success(content, error = syncState.throwable)
-//                    InProgress -> Success(content, isInProgress = true)
-//                    is Success<*> -> Success(content)
-//                }
-//            }
-//
-//        }
-//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InProgress)
-
-
     //pullToRefresh
     //-------------------------------------------------------------------------------------------
-//    private val _ptrState: MutableStateFlow<LoadState<Boolean>> = MutableStateFlow(InProgress)
     val ptrState = syncState.map { it ->
         when (it) {
             InProgress -> true
@@ -117,17 +85,17 @@ class MainScreenVM @Inject constructor(
         loadContent()
     }
 
-    //pullToRefresh experiment
-    //-------------------------------------------------------------------------------------------
-    var ptrStateExp = mutableStateOf(false)
-
-    fun pullToRefreshExp() {
-        viewModelScope.launch {
-            ptrStateExp.value = true
-            delay(2000)
-            ptrStateExp.value = false
-        }
-    }
+//    //pullToRefresh experiment
+//    //-------------------------------------------------------------------------------------------
+//    var ptrStateExp = mutableStateOf(false)
+//
+//    fun pullToRefreshExp() {
+//        viewModelScope.launch {
+//            ptrStateExp.value = true
+//            delay(2000)
+//            ptrStateExp.value = false
+//        }
+//    }
 
     init {
         loadContent()

@@ -1,61 +1,45 @@
 package com.example.newsaggregator.ui.main_screen.components.drawerMenu
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import org.joda.time.format.ISODateTimeFormat.date
 
+
+@Preview
 @Composable
-fun DrawerBody() {
-    val sortCategoryList = listOf(
-        "by default",
-        "ascending",//vozr
-        "descending",//ubiv
-    )
-
-    var expanded by remember {
-        mutableStateOf(false)
-    }
-
-    var selectedOption by remember { mutableStateOf(sortCategoryList[0]) }
-
-
-    Box(
+fun DrawerBody(
+    onOptionSelected: (Int) -> Unit = {},
+    viewmodel: DrawerMenuVM = hiltViewModel()
+) {
+    Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 40.dp)
-            .clickable {
-                expanded = true
-            }
-    )
-    {
-        Text(text = selectedOption)
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            sortCategoryList.forEach { option ->
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        selectedOption = option
-                    },
-                    text = {
-                        Text(text = option)
-                    }
-                )
-            }
-        }
+            .fillMaxWidth(0.7f)
+            .fillMaxHeight()
+            .background(Color.White),
+    ) {
+        Spacer(modifier = Modifier.height(40.dp))
+        RoundedCornerDropDownMenu(
+            title = "Sort by date",
+            selected = viewmodel.selectedSortArg,
+            onOptionSelected = { it ->
+                onOptionSelected(it)
+            },
+            categoriesList = viewmodel.sortCategoryList
+        )
+//        Spacer(modifier = Modifier.height(40.dp))
+//        ArtDropDownMenu()
     }
+
 
 }
