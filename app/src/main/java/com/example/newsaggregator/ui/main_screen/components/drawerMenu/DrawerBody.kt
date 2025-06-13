@@ -13,8 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.joda.time.format.ISODateTimeFormat.date
-
+import androidx.compose.runtime.getValue
 
 @Preview
 @Composable
@@ -22,6 +23,7 @@ fun DrawerBody(
     onOptionSelected: (Int) -> Unit = {},
     viewmodel: DrawerMenuVM = hiltViewModel()
 ) {
+    val allCategories by viewmodel.allCategories.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxWidth(0.7f)
@@ -37,6 +39,13 @@ fun DrawerBody(
             },
             categoriesList = viewmodel.sortCategoryList
         )
+        Spacer(modifier = Modifier.height(40.dp))
+        CategoriesColumn(
+            allCategories
+
+        )
+
+
 //        Spacer(modifier = Modifier.height(40.dp))
 //        ArtDropDownMenu()
     }

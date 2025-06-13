@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.newsaggregator.data.db.Article
 import com.example.newsaggregator.data.db.ArticlesRepository
 import com.example.newsaggregator.ui.main_screen.components.ArticleToMainUiMapper
+import com.example.newsaggregator.ui.main_screen.extensions.categories
 import com.example.newsaggregator.ui.main_screen.extensions.categoryFilter
 import com.example.newsaggregator.ui.main_screen.extensions.dateSort
 import com.example.newsaggregator.ui.main_screen.extensions.loadStateTransmit
@@ -48,13 +49,15 @@ class MainScreenVM @Inject constructor(
         categoryState.value = ""
     }
 
-    //sort
-    //-------------------------------------------------------------------------------------------
-   private val sortState: MutableStateFlow<Int> = MutableStateFlow(0)
-    fun changeSortState(sortSt: Int){
-        sortState.value=sortSt
-    }
 
+
+
+
+    //sort
+    private val sortState: MutableStateFlow<Int> = MutableStateFlow(0)
+    fun changeSortState(sortSt: Int) {
+        sortState.value = sortSt
+    }
 
 
     //articles
@@ -85,17 +88,12 @@ class MainScreenVM @Inject constructor(
         loadContent()
     }
 
-//    //pullToRefresh experiment
-//    //-------------------------------------------------------------------------------------------
-//    var ptrStateExp = mutableStateOf(false)
-//
-//    fun pullToRefreshExp() {
-//        viewModelScope.launch {
-//            ptrStateExp.value = true
-//            delay(2000)
-//            ptrStateExp.value = false
-//        }
-//    }
+    //categories
+    //-------------------------------------------------------------------------------------------
+//    private val categoryState: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    val allCategories=repository.getArticlesFlow()
+        .categories()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         loadContent()

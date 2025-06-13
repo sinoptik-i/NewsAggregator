@@ -1,8 +1,5 @@
 package com.example.newsaggregator.ui.main_screen.components
 
-import android.R.attr.description
-import android.system.Os.link
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,12 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.newsaggregator.R
 import com.example.newsaggregator.data.db.Article
+import com.example.newsaggregator.ui.main_screen.components.categories.CategoriesUi
 import com.example.newsaggregator.ui.main_screen.components.share_button.ShareButton
 import com.example.newsaggregator.ui.web_view.WebScreenObject
 

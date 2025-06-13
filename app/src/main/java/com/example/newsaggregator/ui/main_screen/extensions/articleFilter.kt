@@ -9,9 +9,11 @@ import com.example.newsaggregator.ui.main_screen.Failed
 import com.example.newsaggregator.ui.main_screen.InProgress
 import com.example.newsaggregator.ui.main_screen.LoadState
 import com.example.newsaggregator.ui.main_screen.Success
+import com.example.newsaggregator.ui.main_screen.components.categories.CategoryForUi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlin.text.isNotEmpty
 
@@ -25,6 +27,25 @@ fun Flow<List<Article>>.categoryFilter(category: MutableStateFlow<String>) =
             content
         }
     }
+
+
+fun Flow<List<Article>>.categories() = map {
+    val categories = mutableMapOf<String, Int>()
+    it.forEach { article ->
+        article.categories.forEach {
+            if (categories.get(it) != null) {
+                categories.set(it, categories.get(it)!! + 1)
+            } else {
+                categories.set(it, 1)
+            }
+        }
+    }
+    categories.map { it ->
+        CategoryForUi(it.key, it.value)
+    }.sortedByDescending {
+        it.count
+    }
+}
 
 
 public interface Comparable<in T> {
@@ -42,23 +63,13 @@ fun Flow<List<Article>>.dateSort(sortState: MutableStateFlow<Int>): Flow<List<Ar
             2 -> content.sortedByDescending { it ->
                 timeConverter.dateInMillis(it.pubDate)
             }
+
             else -> content
         }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun Flow<List<Article>>.convertDateForView(
-): Flow<List<Article>> {
-    val timeConverter = TimeConverter()
-    return map { articles ->
-        articles.map { article ->
-            article.copy(
-                pubDate = timeConverter.deltaDate(article.pubDate)
-            )
-        }
-    }
-}
+//
 
 fun Flow<List<Article>>.loadStateTransmit(
     syncState: MutableStateFlow<LoadState<List<Article>>>
@@ -96,5 +107,19 @@ fun <From, To> Flow<LoadState<From>>.mapData(mapper: (From) -> To): Flow<LoadSta
 //            content
 //        }
 //
+//    }
+//}
+
+
+//@RequiresApi(Build.VERSION_CODES.O)
+//fun Flow<List<Article>>.convertDateForView(
+//): Flow<List<Article>> {
+//    val timeConverter = TimeConverter()
+//    return map { articles ->
+//        articles.map { article ->
+//            article.copy(
+//                pubDate = timeConverter.deltaDate(article.pubDate)
+//            )
+//        }
 //    }
 //}

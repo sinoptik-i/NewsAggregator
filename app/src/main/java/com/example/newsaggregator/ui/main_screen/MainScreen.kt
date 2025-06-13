@@ -26,10 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.newsaggregator.data.TimeConverter
-import com.example.newsaggregator.data.db.Article
 import com.example.newsaggregator.ui.main_screen.components.ArticleListItemUi
-import com.example.newsaggregator.ui.main_screen.components.CategoryPanel
+import com.example.newsaggregator.ui.main_screen.components.categories.CategoryItem
 import com.example.newsaggregator.ui.web_view.WebScreenObject
 
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -38,8 +36,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import com.example.newsaggregator.ui.main_screen.components.ArticleUi
 import com.example.newsaggregator.ui.main_screen.components.drawerMenu.DrawerBody
 
@@ -87,8 +83,9 @@ fun MainScreen(
                 Row {
 
                     categoryChoise?.let {
-                        CategoryPanel(
+                        CategoryItem(
                             category = it,
+                            categoryCount = 0,
                             onCancelCategoryClick = { viewModel.clearCategory() }
                         )
                     }
