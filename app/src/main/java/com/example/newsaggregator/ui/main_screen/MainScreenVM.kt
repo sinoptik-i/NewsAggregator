@@ -1,6 +1,7 @@
 package com.example.newsaggregator.ui.main_screen
 
 import android.os.Build
+import android.system.Os.remove
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import com.example.newsaggregator.data.db.Article
 import com.example.newsaggregator.data.db.ArticlesRepository
 import com.example.newsaggregator.ui.main_screen.components.ArticleToMainUiMapper
 import com.example.newsaggregator.ui.main_screen.extensions.categories
+import com.example.newsaggregator.ui.main_screen.extensions.categoriesFilter
 import com.example.newsaggregator.ui.main_screen.extensions.categoryFilter
 import com.example.newsaggregator.ui.main_screen.extensions.dateSort
 import com.example.newsaggregator.ui.main_screen.extensions.loadStateTransmit
@@ -33,6 +35,40 @@ class MainScreenVM @Inject constructor(
 ) : ViewModel() {
 
 
+    //categories
+    //-------------------------------------------------------------------------------------------
+//    private val _selectedCategories: MutableStateFlow<MutableSet<String>> =
+//        MutableStateFlow(mutableSetOf())
+//    val selectedCategories = _selectedCategories
+//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), mutableSetOf())
+//
+//    fun addCategory(category: String) {
+//        _selectedCategories.value.add(category)
+//    }
+//
+//    fun removeCategory(category: String) {
+//        _selectedCategories.value.remove(category)
+//    }
+
+
+    private val _selectedCategories: MutableStateFlow<List<String>> =
+        MutableStateFlow(emptyList())
+
+    val selectedCategories = _selectedCategories
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun addCategory(category: String) {
+        val newlist = _selectedCategories.value.toMutableList()
+        newlist.add(category)
+        _selectedCategories.value = newlist.toList()
+    }
+
+    fun removeCategory(category: String) {
+        val newlist = _selectedCategories.value.toMutableList()
+        newlist.remove(category)
+        _selectedCategories.value=newlist.toList()
+    }
+
     //category
     //-------------------------------------------------------------------------------------------
     private val categoryState: MutableStateFlow<String> = MutableStateFlow("")
@@ -49,10 +85,6 @@ class MainScreenVM @Inject constructor(
         categoryState.value = ""
     }
 
-
-
-
-
     //sort
     private val sortState: MutableStateFlow<Int> = MutableStateFlow(0)
     fun changeSortState(sortSt: Int) {
@@ -67,7 +99,8 @@ class MainScreenVM @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     val state = repository.getArticlesFlow()
-        .categoryFilter(categoryState)
+        .categoriesFilter(_selectedCategories)
+//        .categoryFilter(categoryState)
         .dateSort(sortState)
         .loadStateTransmit(syncState)
         .mapData(uiMapper::map)
@@ -91,9 +124,10 @@ class MainScreenVM @Inject constructor(
     //categories
     //-------------------------------------------------------------------------------------------
 //    private val categoryState: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
-    val allCategories=repository.getArticlesFlow()
+    val allCategories = repository.getArticlesFlow()
         .categories()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
 
     init {
         loadContent()

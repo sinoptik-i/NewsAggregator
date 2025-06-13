@@ -31,15 +31,9 @@ import androidx.compose.ui.unit.sp
 @Preview
 @Composable
 fun CategoryItem(
-    spacerModifier: Modifier = Modifier.width(10.dp),
-    //why not?
-    //        .fillMaxWidth()
-//        .weight(1f)
     category: String = "category",
     categoryCount: Int = 123,
     onCancelIconVisible: Boolean = true,
-
-
     onCancelCategoryClick: () -> Unit = {}
 ) {
     Row(

@@ -37,6 +37,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import com.example.newsaggregator.ui.main_screen.components.ArticleUi
+import com.example.newsaggregator.ui.main_screen.components.categories.TopSelectedCategoriesPanel
 import com.example.newsaggregator.ui.main_screen.components.drawerMenu.DrawerBody
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -48,6 +49,7 @@ fun MainScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val categoryChoise by viewModel.categoryChoise.collectAsStateWithLifecycle()
 //    val sortState by viewModel.sortState.collectAsStateWithLifecycle()
+    val selectedCategories by viewModel.selectedCategories.collectAsStateWithLifecycle()
 
 
     val ptrVisible by viewModel.ptrState.collectAsStateWithLifecycle()
@@ -80,46 +82,55 @@ fun MainScreen(
             )
             {
                 Spacer(modifier = Modifier.width(5.dp))
-                Row {
-
-                    categoryChoise?.let {
-                        CategoryItem(
-                            category = it,
-                            categoryCount = 0,
-                            onCancelCategoryClick = { viewModel.clearCategory() }
-                        )
-                    }
-                }
-                Box {
-                    when (val current = state) {
-                        is Success -> {
-                            ContentArticles(
-                                articles = current.data,
-                                onItemClick = { it ->
-                                    onItemClick(it)
-                                },
-                                onCategoryClick = { it ->
-                                    viewModel.changeCategory(it)
-                                },
-                            )
+                if(selectedCategories.isNotEmpty()){
+                    TopSelectedCategoriesPanel(
+                        categories = selectedCategories.toList(),
+                        onCategoryClick ={category->
+                            viewModel.removeCategory(category)
                         }
+                    )
+                }
+//                Row {
+//
+//                    categoryChoise?.let {
+//                        CategoryItem(
+//                            category = it,
+//                            categoryCount = 0,
+//                            onCancelCategoryClick = { viewModel.clearCategory() }
+//                        )
+//                    }
+//                }
+                    Box {
+                        when (val current = state) {
+                            is Success -> {
+                                ContentArticles(
+                                    articles = current.data,
+                                    onItemClick = { it ->
+                                        onItemClick(it)
+                                    },
+                                    onCategoryClick = { it ->
+                                        viewModel.addCategory(it)
+//                                        viewModel.changeCategory(it)
+                                    },
+                                )
+                            }
 
-                        is Failed -> {
-                            Button(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.Center),
-                                onClick = viewModel::loadContent
-                            ) {
-                                Text("Ошибка. Повторить попытку.")
+                            is Failed -> {
+                                Button(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.Center),
+                                    onClick = viewModel::loadContent
+                                ) {
+                                    Text("Ошибка. Повторить попытку.")
+                                }
+                            }
+
+                            is InProgress -> {
+                                ProgressBar()
                             }
                         }
-
-                        is InProgress -> {
-                            ProgressBar()
-                        }
                     }
-                }
             }
             Row(
                 modifier = Modifier

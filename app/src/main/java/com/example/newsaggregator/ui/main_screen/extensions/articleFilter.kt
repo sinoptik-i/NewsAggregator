@@ -29,6 +29,20 @@ fun Flow<List<Article>>.categoryFilter(category: MutableStateFlow<String>) =
     }
 
 
+//fun Flow<List<Article>>.categoriesFilter(categories: MutableStateFlow<MutableSet<String>>) =
+fun Flow<List<Article>>.categoriesFilter(categories: MutableStateFlow<List<String>>) =
+    combine(categories) { content, categories ->
+        if (categories.isNotEmpty()) {
+            content.filter { article ->
+//                article.categories.intersect(categories).isNotEmpty()
+                article.categories.containsAll(categories)
+            }
+        } else {
+            content
+        }
+    }
+
+
 fun Flow<List<Article>>.categories() = map {
     val categories = mutableMapOf<String, Int>()
     it.forEach { article ->
@@ -56,11 +70,11 @@ fun Flow<List<Article>>.dateSort(sortState: MutableStateFlow<Int>): Flow<List<Ar
     val timeConverter = TimeConverter()
     return combine(sortState) { content, sortState ->
         when (sortState) {
-            1 -> content.sortedBy { it ->
+            1 -> content.sortedByDescending { it ->
                 timeConverter.dateInMillis(it.pubDate)
             }
 
-            2 -> content.sortedByDescending { it ->
+            2 -> content.sortedBy { it ->
                 timeConverter.dateInMillis(it.pubDate)
             }
 
