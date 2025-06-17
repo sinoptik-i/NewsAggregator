@@ -1,8 +1,6 @@
 package com.example.newsaggregator.ui.main_screen.components.categories
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -51,7 +49,7 @@ fun CategoryItemCancelable(
         CategoryItem(
             category = text,
             categoryCount = 0,
-            onCancelCategoryClick = {
+            onCategoryClick = {
                 onCategoryClick(text)
             }
         )

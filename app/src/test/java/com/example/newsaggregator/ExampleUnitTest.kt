@@ -5,6 +5,10 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.newsaggregator.data.TimeConverter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import java.text.SimpleDateFormat
@@ -24,8 +28,33 @@ import kotlin.time.Duration.Companion.milliseconds
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        testTime()
+        flowTest()
+//        testTime()
 //        assertEquals(2,4)
+    }
+}
+
+
+fun flowTest() {
+    runBlocking {
+        emitNums().filter {
+            it % 2 == 0
+        }
+//            .also {
+//            println("${it * 200}")
+//
+//        }
+            .collect {
+                println(it)
+            }
+
+    }
+}
+
+suspend fun emitNums() = flow {
+    for (i in 1..9) {
+        emit(i)
+        delay(1000)
     }
 }
 
@@ -42,7 +71,6 @@ fun testTime() {
 //    println(timeConverter.deltaDate(anyTime))
 
 
-
 }
 
 const val DATE_TAG = "DATE_TAG"
@@ -54,8 +82,6 @@ fun toDateFormat(str: String = "Thu, 29 May 2025 04:00:17 GMT"): String {
     val using = "${splitedDate[1]} ${splitedDate[2]} ${splitedDate[3]} ${splitedDate[4]}"
     return using
 }
-
-
 
 //rabotaet. no kak dostat' millis?
 fun timeFromString(time: String): String {
@@ -80,7 +106,7 @@ fun deltaTimeHours(time: String): Long {
     val nowTime = Calendar.getInstance().timeInMillis
     try {
         val date = formatter.parse(time)
-        println( "t ${date!!.time}")
+        println("t ${date!!.time}")
 //        Log.d(DATE_TAG, "now Time $date.time")
 //        if (date != null) {
 //            Log.d(DATE_TAG, "now Time ${(nowTime - date.time) / (1000 * 60 * 60 * 24)}")

@@ -2,6 +2,7 @@ package com.example.newsaggregator.ui.main_screen
 
 import android.os.Build
 import android.system.Os.remove
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.forEach
 
 @HiltViewModel
 class MainScreenVM @Inject constructor(
@@ -58,9 +60,15 @@ class MainScreenVM @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun addCategory(category: String) {
-        val newlist = _selectedCategories.value.toMutableList()
-        newlist.add(category)
-        _selectedCategories.value = newlist.toList()
+        Log.d("cats","adcategory $category")
+        if (!_selectedCategories.value.contains(category)) {
+            val newlist = _selectedCategories.value.toMutableList()
+            newlist.add(category)
+            _selectedCategories.value = newlist.toList()
+        }
+        _selectedCategories.value.forEach {
+            Log.d("cats:","adcategory allcats: $it")
+        }
     }
 
     fun removeCategory(category: String) {
@@ -69,21 +77,7 @@ class MainScreenVM @Inject constructor(
         _selectedCategories.value=newlist.toList()
     }
 
-    //category
-    //-------------------------------------------------------------------------------------------
-    private val categoryState: MutableStateFlow<String> = MutableStateFlow("")
 
-    val categoryChoise = categoryState.map { it.takeIf { it.isNotEmpty() } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-
-
-    fun changeCategory(category: String) {
-        categoryState.value = category
-    }
-
-    fun clearCategory() {
-        categoryState.value = ""
-    }
 
     //sort
     private val sortState: MutableStateFlow<Int> = MutableStateFlow(0)
@@ -100,7 +94,6 @@ class MainScreenVM @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     val state = repository.getArticlesFlow()
         .categoriesFilter(_selectedCategories)
-//        .categoryFilter(categoryState)
         .dateSort(sortState)
         .loadStateTransmit(syncState)
         .mapData(uiMapper::map)
@@ -145,3 +138,18 @@ class MainScreenVM @Inject constructor(
     }
 }
 
+////category
+////-------------------------------------------------------------------------------------------
+//private val categoryState: MutableStateFlow<String> = MutableStateFlow("")
+//
+//val categoryChoise = categoryState.map { it.takeIf { it.isNotEmpty() } }
+//    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+//
+//
+//fun changeCategory(category: String) {
+//    categoryState.value = category
+//}
+//
+//fun clearCategory() {
+//    categoryState.value = ""
+//}

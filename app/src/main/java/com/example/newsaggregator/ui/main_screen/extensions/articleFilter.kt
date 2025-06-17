@@ -2,6 +2,7 @@ package com.example.newsaggregator.ui.main_screen.extensions
 
 import android.R.attr.category
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.newsaggregator.data.TimeConverter
 import com.example.newsaggregator.data.db.Article
@@ -29,17 +30,26 @@ fun Flow<List<Article>>.categoryFilter(category: MutableStateFlow<String>) =
     }
 
 
-//fun Flow<List<Article>>.categoriesFilter(categories: MutableStateFlow<MutableSet<String>>) =
 fun Flow<List<Article>>.categoriesFilter(categories: MutableStateFlow<List<String>>) =
     combine(categories) { content, categories ->
         if (categories.isNotEmpty()) {
             content.filter { article ->
-//                article.categories.intersect(categories).isNotEmpty()
                 article.categories.containsAll(categories)
             }
         } else {
             content
         }
+            .map { it ->
+                categories.forEach {
+                    Log.d("cats:", it)
+                }
+                Log.d("cats:", "art: ${it.categories.toString()}")
+                Log.d("cats:", "------------------------------------------------------------")
+
+                it
+
+            }
+
     }
 
 

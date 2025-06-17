@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.newsaggregator.data.db.Article
-import com.example.newsaggregator.ui.main_screen.components.categories.CategoriesUi
+import com.example.newsaggregator.ui.main_screen.components.categories.CategoriesArticleUi
 import com.example.newsaggregator.ui.main_screen.components.share_button.ShareButton
 import com.example.newsaggregator.ui.web_view.WebScreenObject
 
@@ -129,7 +129,7 @@ fun ArticleListItemUi(
 
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                CategoriesUi(
+                CategoriesArticleUi(
                     article.categories,
                     { it ->
                         onCategoryClick(it)

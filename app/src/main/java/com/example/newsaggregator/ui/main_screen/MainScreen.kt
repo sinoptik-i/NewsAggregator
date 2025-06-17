@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newsaggregator.ui.main_screen.components.ArticleListItemUi
-import com.example.newsaggregator.ui.main_screen.components.categories.CategoryItem
 import com.example.newsaggregator.ui.web_view.WebScreenObject
 
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -47,7 +46,7 @@ fun MainScreen(
     viewModel: MainScreenVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val categoryChoise by viewModel.categoryChoise.collectAsStateWithLifecycle()
+//    val categoryChoise by viewModel.categoryChoise.collectAsStateWithLifecycle()
 //    val sortState by viewModel.sortState.collectAsStateWithLifecycle()
     val selectedCategories by viewModel.selectedCategories.collectAsStateWithLifecycle()
 
@@ -64,8 +63,15 @@ fun MainScreen(
         modifier = Modifier.fillMaxWidth(),
         drawerContent = {
             DrawerBody(
-                onOptionSelected = { sortState ->
+                onSortOptionSelected = { sortState ->
                     viewModel.changeSortState(sortState)
+                },
+                selectedCats = selectedCategories,
+                onCategorySelected = {
+                    viewModel.addCategory(it)
+                },
+                onCategoryCanceled = {
+                    viewModel.removeCategory(it)
                 },
             )
         }
@@ -82,16 +88,15 @@ fun MainScreen(
             )
             {
                 Spacer(modifier = Modifier.width(5.dp))
-                if(selectedCategories.isNotEmpty()){
+                if (selectedCategories.isNotEmpty()) {
                     TopSelectedCategoriesPanel(
                         categories = selectedCategories.toList(),
-                        onCategoryClick ={category->
+                        onCategoryClick = { category ->
                             viewModel.removeCategory(category)
                         }
                     )
                 }
 //                Row {
-//
 //                    categoryChoise?.let {
 //                        CategoryItem(
 //                            category = it,
@@ -100,37 +105,37 @@ fun MainScreen(
 //                        )
 //                    }
 //                }
-                    Box {
-                        when (val current = state) {
-                            is Success -> {
-                                ContentArticles(
-                                    articles = current.data,
-                                    onItemClick = { it ->
-                                        onItemClick(it)
-                                    },
-                                    onCategoryClick = { it ->
-                                        viewModel.addCategory(it)
+                Box {
+                    when (val current = state) {
+                        is Success -> {
+                            ContentArticles(
+                                articles = current.data,
+                                onItemClick = { it ->
+                                    onItemClick(it)
+                                },
+                                onCategoryClick = { it ->
+                                    viewModel.addCategory(it)
 //                                        viewModel.changeCategory(it)
-                                    },
-                                )
-                            }
+                                },
+                            )
+                        }
 
-                            is Failed -> {
-                                Button(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .align(Alignment.Center),
-                                    onClick = viewModel::loadContent
-                                ) {
-                                    Text("Ошибка. Повторить попытку.")
-                                }
-                            }
-
-                            is InProgress -> {
-                                ProgressBar()
+                        is Failed -> {
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.Center),
+                                onClick = viewModel::loadContent
+                            ) {
+                                Text("Ошибка. Повторить попытку.")
                             }
                         }
+
+                        is InProgress -> {
+                            ProgressBar()
+                        }
                     }
+                }
             }
             Row(
                 modifier = Modifier
