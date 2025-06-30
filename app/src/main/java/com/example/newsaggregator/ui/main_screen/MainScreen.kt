@@ -1,6 +1,7 @@
 package com.example.newsaggregator.ui.main_screen
 
 import android.os.Build
+import android.widget.ProgressBar
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,8 +47,6 @@ fun MainScreen(
     viewModel: MainScreenVM = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-//    val categoryChoise by viewModel.categoryChoise.collectAsStateWithLifecycle()
-//    val sortState by viewModel.sortState.collectAsStateWithLifecycle()
     val selectedCategories by viewModel.selectedCategories.collectAsStateWithLifecycle()
 
 
@@ -56,7 +55,7 @@ fun MainScreen(
         ptrVisible,
         { viewModel.pullToRefresh() })
 
-    val drawerState = rememberDrawerState(DrawerValue.Open)
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -74,14 +73,15 @@ fun MainScreen(
                     viewModel.removeCategory(it)
                 },
             )
+//            }
         }
     )
     {
         Scaffold(
-            modifier = Modifier.pullRefresh(ptrState)
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(ptrState)
         ) { paddingValues ->
-
-
             Column(
                 modifier = Modifier
                     .padding(paddingValues)
@@ -96,15 +96,6 @@ fun MainScreen(
                         }
                     )
                 }
-//                Row {
-//                    categoryChoise?.let {
-//                        CategoryItem(
-//                            category = it,
-//                            categoryCount = 0,
-//                            onCancelCategoryClick = { viewModel.clearCategory() }
-//                        )
-//                    }
-//                }
                 Box {
                     when (val current = state) {
                         is Success -> {
@@ -115,7 +106,6 @@ fun MainScreen(
                                 },
                                 onCategoryClick = { it ->
                                     viewModel.addCategory(it)
-//                                        viewModel.changeCategory(it)
                                 },
                             )
                         }
@@ -146,7 +136,6 @@ fun MainScreen(
                 PullRefreshIndicator(
                     ptrVisible,
                     ptrState,
-
                     )
             }
         }
@@ -189,7 +178,6 @@ private fun ContentArticles(
                 },
                 onCategoryClick = { it ->
                     onCategoryClick(it)
-
                 }
             )
         }

@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.collections.forEach
@@ -39,42 +40,17 @@ class MainScreenVM @Inject constructor(
 
     //categories
     //-------------------------------------------------------------------------------------------
-//    private val _selectedCategories: MutableStateFlow<MutableSet<String>> =
-//        MutableStateFlow(mutableSetOf())
-//    val selectedCategories = _selectedCategories
-//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), mutableSetOf())
-//
-//    fun addCategory(category: String) {
-//        _selectedCategories.value.add(category)
-//    }
-//
-//    fun removeCategory(category: String) {
-//        _selectedCategories.value.remove(category)
-//    }
-
-
-    private val _selectedCategories: MutableStateFlow<List<String>> =
-        MutableStateFlow(emptyList())
-
+    private val _selectedCategories: MutableStateFlow<Set<String>> =
+        MutableStateFlow(emptySet())
     val selectedCategories = _selectedCategories
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), mutableSetOf())
 
     fun addCategory(category: String) {
-        Log.d("cats","adcategory $category")
-        if (!_selectedCategories.value.contains(category)) {
-            val newlist = _selectedCategories.value.toMutableList()
-            newlist.add(category)
-            _selectedCategories.value = newlist.toList()
-        }
-        _selectedCategories.value.forEach {
-            Log.d("cats:","adcategory allcats: $it")
-        }
+        _selectedCategories.update { it + category }
     }
 
     fun removeCategory(category: String) {
-        val newlist = _selectedCategories.value.toMutableList()
-        newlist.remove(category)
-        _selectedCategories.value=newlist.toList()
+        _selectedCategories.update { it - category }
     }
 
 

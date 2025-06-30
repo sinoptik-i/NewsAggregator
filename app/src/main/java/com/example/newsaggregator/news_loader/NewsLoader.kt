@@ -19,8 +19,6 @@ import javax.inject.Inject
 const val TAG = "NewsLoader"
 
 class NewsLoader @Inject constructor() {
-
-
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://www.theguardian.com")
         .addConverterFactory(

@@ -31,7 +31,10 @@ androidx-material = { group = "androidx.compose.material", name = "material" }
 #pulltorefresh-compose={ group = "androidx.compose.material", name = "material", version.ref = "pulltorefresh" }
 
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-version" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-version" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 joda-time-joda-time = { module = "joda-time:joda-time", version.ref = "jodaTimeVersion" }
@@ -53,8 +56,7 @@ retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit
 xmlutil-core = { group = "io.github.pdvrieze.xmlutil", name = "core", version.ref = "xmlUtil"  }
 xmlutil-serialization = { group = "io.github.pdvrieze.xmlutil", name = "serialization", version.ref = "xmlUtil"  }
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coilVersion" }
-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-version" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-version" }
+
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room"}
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room"}

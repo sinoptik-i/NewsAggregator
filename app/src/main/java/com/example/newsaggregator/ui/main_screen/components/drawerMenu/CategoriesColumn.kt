@@ -52,26 +52,6 @@ fun CategoriesColumn(
             selectedCategories = selectedCategories,
             onCategoryCanceled = { onCategoryCanceled(it) }
         )
-
-
-//        LazyVerticalGrid(
-//            columns = GridCells.Fixed(2),
-//            modifier = Modifier
-////                .fillMaxSize()
-//            //       .padding(paddingValues)
-//        ) {
-//            items(selectedCategories) { item ->
-//                CategoryItemCancelable(
-//                    text = item,
-//                    onCategoryClick = {
-//                        onCategoryCanceled(it)
-//                    }
-//                )
-//
-//            }
-//        }
-
-
         RoundedCornerTextField(
             text = text,
             label = "category",
@@ -87,22 +67,6 @@ fun CategoriesColumn(
             allCategories = allCategories,
             onCategorySelected = { onCategorySelected(it) }
         )
-
-//        LazyColumn {
-//            items(allCategories) { item ->
-//                CategoryColumnItem(
-//                    text = item.category,
-//                    categoryCount = item.count,
-//                    onCategoryClick = {
-//                        onCategorySelected(it)
-//                    }
-
-//                    item.category,
-//                    item.count,
-//                    onCategoryClick = {
-//                        onCategorySelected(it)
-//                    }
-//        )
 
     }
 }
@@ -125,7 +89,8 @@ fun SelectedCategories(
                 color = Color.Blue,
                 shape = RoundedCornerShape(5.dp)
             ),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+
     )
     {
 
@@ -206,7 +171,7 @@ fun AllCategories(
 @Preview
 @Composable
 fun CategoryColumnItem(
-    text: String = "category",
+    text: String = "categorycategorycategorycategorycategorycategorycategorycategorycategory",
     categoryCount: Int = 123,
     onCategoryClick: (category: String) -> Unit = {}
 ) {

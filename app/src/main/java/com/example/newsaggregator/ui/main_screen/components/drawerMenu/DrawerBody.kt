@@ -20,7 +20,7 @@ import androidx.compose.runtime.getValue
 fun DrawerBody(
     onSortOptionSelected: (Int) -> Unit = {},
 
-    selectedCats: List<String> = emptyList(),
+    selectedCats: Collection<String> = emptyList(),
     onCategorySelected: (String) -> Unit = {},
     onCategoryCanceled: (String) -> Unit = {}
 ) {
@@ -51,7 +51,7 @@ fun DrawerBody(
         )
         Spacer(modifier = Modifier.height(40.dp))
         CategoriesColumn(
-            selectedCategories = selectedCats,
+            selectedCategories = selectedCats.toList(),
             onCategorySelected = {
                 onCategorySelected(it)
             },
@@ -59,10 +59,6 @@ fun DrawerBody(
                 onCategoryCanceled(it)
             },
         )
-
-
-//        Spacer(modifier = Modifier.height(40.dp))
-//        ArtDropDownMenu()
     }
 
 

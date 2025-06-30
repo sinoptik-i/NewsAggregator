@@ -13,6 +13,7 @@ import com.example.newsaggregator.ui.main_screen.Success
 import com.example.newsaggregator.ui.main_screen.components.categories.CategoryForUi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -30,7 +31,7 @@ fun Flow<List<Article>>.categoryFilter(category: MutableStateFlow<String>) =
     }
 
 
-fun Flow<List<Article>>.categoriesFilter(categories: MutableStateFlow<List<String>>) =
+fun Flow<List<Article>>.categoriesFilter(categories: Flow<Collection<String>>) =
     combine(categories) { content, categories ->
         if (categories.isNotEmpty()) {
             content.filter { article ->
@@ -39,17 +40,13 @@ fun Flow<List<Article>>.categoriesFilter(categories: MutableStateFlow<List<Strin
         } else {
             content
         }
-            .map { it ->
+            .onEach { it ->
                 categories.forEach {
                     Log.d("cats:", it)
                 }
-                Log.d("cats:", "art: ${it.categories.toString()}")
+                Log.d("cats:", "art: ${it.categories}")
                 Log.d("cats:", "------------------------------------------------------------")
-
-                it
-
             }
-
     }
 
 
@@ -98,13 +95,10 @@ fun Flow<List<Article>>.dateSort(sortState: MutableStateFlow<Int>): Flow<List<Ar
 fun Flow<List<Article>>.loadStateTransmit(
     syncState: MutableStateFlow<LoadState<List<Article>>>
 ) = combine(syncState) { content, syncState ->
-    when {
-        content.isEmpty() -> syncState
-        else -> when (syncState) {
-            is Failed -> Success(content, error = syncState.throwable)
-            InProgress -> Success(content, isInProgress = true)
-            is Success<*> -> Success(content)
-        }
+    when (syncState) {
+        is Failed -> Success(content, error = syncState.throwable)
+        InProgress -> Success(content, isInProgress = true)
+        is Success<*> -> Success(content)
     }
 }
 
